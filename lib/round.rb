@@ -3,11 +3,13 @@
 # frozen_string_literal: true
 
 class Round
+  include GameLogic
 
   def initialize
     @current_dictionary = []
     @secret_word = []
     @strikes = 0
+    @blanks = []
     @incorrect_letters = []
     @current_guess = ''
   end
@@ -15,22 +17,28 @@ class Round
   def start_round
     load_dictionary
     generate_secret_word(@current_dictionary)
+    generate_blanks
     start_player_turn
   end
 
   def start_player_turn
-    display_round_state
-    prompt_save_game
+    until game_over?
+      display_round_state
+      prompt_save_game
+      guess_letter
+      check_guess
+    end
+  end
+
+  def game_over?
+    @strikes == 5
+    # Or @blanks includes all letters?
   end
 
   def prompt_save_game
     puts "Would you like to save your game? (Enter 'save' or enter any other key to skip)"
     result = gets.chomp
-    if result.downcase == 'save' || result.downcase == "'save'"
-      save_game
-    else
-      guess_letter
-    end
+    save_game if result.downcase == 'save' || result.downcase == "'save'"
   end
 
   def save_game
@@ -60,9 +68,13 @@ class Round
   def generate_secret_word(dictionary)
     word = ''
     word = dictionary.sample until word.length >= 5 && word.length <= 12
-    @secret_word = word.split('')
+    @secret_word = word.downcase.split('')
     print @secret_word # Keep for debugging
     puts # Keep for debugging
+  end
+
+  def generate_blanks
+    @blanks = Array.new(@secret_word.length, '_ ')
   end
 
   def display_round_state
@@ -73,7 +85,7 @@ class Round
 
   def display_blank_spaces
     puts 'Secret Word: '
-    @secret_word.length.times { print '_ ' }
+    puts @blanks.join("")
     puts
     puts
   end
