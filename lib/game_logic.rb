@@ -2,13 +2,16 @@
 
 module GameLogic
 
-  def check_guess    
+  def check_guess
     check_strikes
     check_blanks
   end
 
   def check_strikes
-    @strikes += 1 unless @secret_word.include?(@current_guess.downcase)
+    unless @secret_word.include?(@current_guess.downcase)
+      @strikes += 1
+      @incorrect_letters.push(@current_guess) 
+    end
   end
 
   def check_blanks
