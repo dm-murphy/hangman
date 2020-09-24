@@ -1,5 +1,3 @@
-# Next step is check guess
-
 # frozen_string_literal: true
 
 class Round
@@ -18,21 +16,28 @@ class Round
     load_dictionary
     generate_secret_word(@current_dictionary)
     generate_blanks
+    display_round_state
     start_player_turn
+    display_result
   end
 
   def start_player_turn
     until game_over?
-      display_round_state
-      prompt_save_game
       guess_letter
       check_guess
+      display_round_state
+      prompt_save_game
+      display_warning
     end
   end
 
   def game_over?
-    @strikes == 5
+    @strikes == 6 || @blanks == @secret_word
     # Or @blanks includes all letters?
+  end
+
+  def display_result
+    @strikes == 6 ? (puts "You lose!") : (puts "You win!")
   end
 
   def prompt_save_game
@@ -57,7 +62,8 @@ class Round
   end
 
   def check_valid?
-    @current_guess.count("a-zA-Z").positive? && @current_guess.length == 1
+    @current_guess.count('a-zA-Z').positive? && @current_guess.length == 1 &&
+      @incorrect_letters.include?(@current_guess) == false
   end
 
   def load_dictionary
@@ -78,6 +84,7 @@ class Round
   end
 
   def display_round_state
+    puts
     display_blank_spaces
     display_strikes
     display_incorrect_letters
@@ -87,23 +94,26 @@ class Round
     puts 'Secret Word: '
     puts @blanks.join("")
     puts
-    puts
   end
 
   def display_strikes
     puts 'Strikes: '
     @strikes.times { print '* ' }
     puts
-    puts 'Warning! Final strike!' if @strikes == 5
+    puts
   end
 
   def display_incorrect_letters
     unless @incorrect_letters.empty?
 
     puts 'Incorrect Letters: '
-    print @incorrect_letters
+    print @incorrect_letters.join(" ")
     puts
     puts
     end
+  end
+
+  def display_warning
+    puts 'Warning! Final strike!' if @strikes == 5
   end
 end
