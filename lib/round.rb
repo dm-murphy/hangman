@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# Creates new round of game, displays to command line and controls save/load features
 class Round
   include GameLogic
 
@@ -18,52 +19,6 @@ class Round
     generate_blanks
     display_round_state
     start_player_turn
-    display_result
-  end
-
-  def start_player_turn
-    until game_over?
-      guess_letter
-      check_guess
-      display_round_state
-      prompt_save_game
-      display_warning
-    end
-  end
-
-  def game_over?
-    @strikes == 6 || @blanks == @secret_word
-    # Or @blanks includes all letters?
-  end
-
-  def display_result
-    @strikes == 6 ? (puts "You lose!") : (puts "You win!")
-  end
-
-  def prompt_save_game
-    puts "Would you like to save your game? (Enter 'save' or enter any other key to skip)"
-    result = gets.chomp
-    save_game if result.downcase == 'save' || result.downcase == "'save'"
-  end
-
-  def save_game
-    # Use to save round state
-    puts "Not ready yet!"
-  end
-
-  def guess_letter
-    loop do
-      puts 'Guess a letter from the word: '
-      @current_guess = gets.chomp
-      break if check_valid?
-
-      puts "That's not valid."
-    end
-  end
-
-  def check_valid?
-    @current_guess.count('a-zA-Z').positive? && @current_guess.length == 1 &&
-      @incorrect_letters.include?(@current_guess) == false
   end
 
   def load_dictionary
@@ -107,10 +62,40 @@ class Round
     unless @incorrect_letters.empty?
 
     puts 'Incorrect Letters: '
-    print @incorrect_letters.join(" ")
+    print @incorrect_letters.join(' ')
     puts
     puts
     end
+  end
+
+  def start_player_turn
+    until game_over?
+      guess_letter
+      check_guess
+      display_round_state
+      prompt_save_game
+      display_warning
+    end
+    display_result
+  end
+
+  def game_over?
+    @strikes == 6 || @blanks == @secret_word
+  end
+
+  def display_result
+    @strikes == 6 ? (puts 'You lose!') : (puts 'You win!')
+  end
+
+  def prompt_save_game
+    puts "Hit enter to continue or type 'save' to store your game."
+    result = gets.chomp
+    save_game if result.downcase == 'save' || result.downcase == "'save'"
+  end
+
+  def save_game
+    # Use to save round state
+    puts "Not ready yet!"
   end
 
   def display_warning
