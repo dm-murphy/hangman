@@ -11,6 +11,7 @@ class Round
     @blanks = []
     @incorrect_letters = []
     @current_guess = ''
+    @save_id = 0
   end
 
   def start_round
@@ -94,8 +95,15 @@ class Round
   end
 
   def save_game
-    # Use to save round state
-    puts "Not ready yet!"
+    time = Time.now.getutc
+    
+    Dir.mkdir("saved_rounds") unless Dir.exists? "saved_rounds"
+
+    filename = "saved_rounds/#{time}.rb"
+
+    File.open(filename,'w') do |file|
+      # Save the variables?
+    end
   end
 
   def display_warning
