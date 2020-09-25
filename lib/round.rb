@@ -2,6 +2,8 @@
 
 # Creates new round of game, displays to command line and controls save/load features
 class Round
+  require 'yaml'
+
   include GameLogic
 
   def initialize
@@ -11,7 +13,19 @@ class Round
     @blanks = []
     @incorrect_letters = []
     @current_guess = ''
-    @save_id = 0
+  end
+
+  def load_round(file)
+    restored_round = YAML.load(File.read("saved_rounds/#{file}"))
+
+    @secret_word = restored_round[:secret_word]
+    @strikes = restored_round[:strikes]
+    @blanks = restored_round[:blanks]
+    @incorrect_letters = restored_round[:incorrect_letters]
+    @current_guess = restored_round[:current_guess]
+
+    display_round_state
+    start_player_turn
   end
 
   def start_round
@@ -85,7 +99,7 @@ class Round
   end
 
   def display_result
-    @strikes == 6 ? (puts 'You lose!') : (puts 'You win!')
+    @strikes == 6 ? (puts "You lose! The word was #{@secret_word.join('')}") : (puts 'You win!')
   end
 
   def prompt_save_game
@@ -97,13 +111,24 @@ class Round
   def save_game
     time = Time.now.getutc
     
-    Dir.mkdir("saved_rounds") unless Dir.exists? "saved_rounds"
+    Dir.mkdir('saved_rounds') unless Dir.exist? 'saved_rounds'
 
-    filename = "saved_rounds/#{time}.rb"
+    filename = "saved_rounds/#{time}.yml"
 
     File.open(filename,'w') do |file|
-      # Save the variables?
+      file.write self.to_yaml
     end
+    puts "Saved!"
+  end
+
+  def to_yaml
+    YAML.dump ({
+      secret_word: @secret_word,
+      strikes: @strikes,
+      blanks: @blanks,
+      incorrect_letters: @incorrect_letters,
+      current_guess: @current_guess
+    })
   end
 
   def display_warning
