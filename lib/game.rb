@@ -35,12 +35,27 @@ HEREDOC
   end
 
   def prompt_load_game
-    puts "Select the game file you would like to load: "
-    # open_saved_file
+    puts "Select the number for the saved .yml file you would like to load: "
+    Dir.entries("saved_rounds").each_with_index do |file, index|
+      print index
+      print "  =  "
+      print file
+      puts
+    end
+    save_number = gets.chomp.to_i
+    if save_number > 1
+      print "Loading... " 
+      loaded_file = Dir.entries('saved_rounds')[save_number]
+      puts loaded_file
+      load_saved_round(loaded_file)
+    else
+      puts "That's not valid. Goodbye!"
+    end
   end
 
-  def open_saved_file
-    # Open the saved file
+  def load_saved_round(file)
+    @round = Round.new
+    @round.load_round(file)
   end
 
   def new_round
