@@ -1,4 +1,5 @@
-# frozen_string_literal: true
+# frozen_string_literal: truen
+
 
 class Game
 
@@ -28,9 +29,9 @@ HEREDOC
   end
 
   def load_game?
-    puts 'Would you like to load a saved game? (y/n)'
-    answer = gets.chomp
-    answer.downcase == 'y' ? true : false
+    puts "Hit enter to start a new game or type 'load' to bring up a saved file."
+    result = gets.chomp
+    result.downcase == 'load' || result.downcase == "'load'"
   end
 
   def prompt_load_game
