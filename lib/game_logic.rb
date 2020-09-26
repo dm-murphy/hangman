@@ -29,10 +29,10 @@ module GameLogic
   end
 
   def check_strikes
-    unless @secret_word.include?(@current_guess.downcase)
-      @strikes += 1
-      @incorrect_letters.push(@current_guess) 
-    end
+    return if @secret_word.include?(@current_guess.downcase)
+
+    @strikes += 1
+    @incorrect_letters.push(@current_guess)
   end
 
   def check_blanks
