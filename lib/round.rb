@@ -39,7 +39,6 @@ class Round
     word = ''
     word = dictionary.sample until word.length >= 5 && word.length <= 12
     @secret_word = word.downcase.split('')
-    print @secret_word # Keep for debugging
   end
 
   def generate_blanks
