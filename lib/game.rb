@@ -1,4 +1,4 @@
-# frozen_string_literal: truen
+# frozen_string_literal: true
 
 # Chooses new game or loads previously saved file
 class Game
